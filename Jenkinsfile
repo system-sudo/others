@@ -40,7 +40,7 @@ pipeline {
             steps {
                 script {
                     // Run the Docker container in detached mode
-                    def container = docker.image(dockerImageName).run('-d -p 5000:3000')
+                    def container = docker.image(dockerImageName).run('-d -p 80:80')
 
                     // Wait for the container to be ready
                     sh 'sleep 10'
