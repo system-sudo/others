@@ -39,17 +39,10 @@ pipeline {
         stage('Run Image') {
             steps {
                 script {
-                    // Run the Docker container in detached mode
+                    
                     def container = docker.image(dockerImageName).run('-d -p 80:80')
 
-                    // Wait for the container to be ready
-                    sh 'sleep 10'
-
-                    // Optionally, execute commands inside the running container
-                    sh "docker exec ${container.id} curl http://localhost:3000"
-
-                    // Stop the container after use
-                    sh "docker stop ${container.id}"
+                
                 }
             }
         }
