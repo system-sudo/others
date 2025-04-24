@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         dockerImageName = 'systemtesting48/html'
-        registryCredential = 'Docker'
+        registryCredential = 'dockerhub'
         dockerImage = ''
     }
 
