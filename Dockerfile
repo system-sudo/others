@@ -2,7 +2,7 @@
 FROM nginx:alpine
 
 # Copy the HTML file to the default Nginx directory
-COPY index.html /usr/share/nginx/html/index.html
+COPY sq1.html /usr/share/nginx/html/index.html
 
 # Optionally, copy other assets (e.g., CSS, JS files)
 # COPY assets/ /usr/share/nginx/html/assets/
