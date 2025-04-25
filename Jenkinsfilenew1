@@ -1,63 +1,65 @@
-pipeline {
-    agent any
+ pipeline {
+     agent any
 
-    environment {
-        dockerImageName = 'systemtesting48/html'
-        registryCredential = 'docker'
-        dockerImage = ''
-    }
+     environment {
+         dockerImageName = 'systemtesting48/html'
+         registryCredential = 'docker'
+         dockerImage = ''
+         KUBECONFIG = '/path/to/your/kubeconfig'
+     }
 
-    stages {
-        stage('Cloning Git') {
-            steps {
-                git(
-                    url: 'https://github.com/System-Sudo/others.git',
-                    branch: 'main',
-                    credentialsId: 'github'
-                )
-            }
-        }
+     stages {
+         stage('Cloning Git') {
+             steps {
+                 git(
+                     url: 'https://github.com/System-Sudo/others.git',
+                     branch: 'main',
+                     credentialsId: 'github'
+                 )
+             }
+         }
 
-        stage('Build Image') {
-            steps {
-                script {
-                    dockerImage = docker.build(dockerImageName)
-                }
-            }
-        }
+         stage('Build Image') {
+             steps {
+                 script {
+                     dockerImage = docker.build(dockerImageName)
+                 }
+             }
+         }
 
-        stage('Push Image') {
-            steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
-                        dockerImage.push("$BUILD_NUMBER")
-                        dockerImage.push('latest')
-                    }
-                }
-            }
-        }
+         stage('Push Image') {
+             steps {
+                 script {
+                     docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
+                         dockerImage.push("$BUILD_NUMBER")
+                         dockerImage.push('latest')
+                     }
+                 }
+             }
+         }
 
-        stage('Deploy to K8s') {
-      steps{
-        script {
-          sh "sed -i 's,TEST_IMAGE_NAME,systemtesting48/html:$BUILD_NUMBER,' deploymentservice.yaml"
-          sh "cat deploymentservice.yaml"
-          sh "kubectl --kubeconfig=/home/ec2-user/config get pods"
-          sh "kubectl --kubeconfig=/home/ec2-user/config apply -f deploymentservice.yaml"
-        }
-      }
-    }
-        stage('Remove Unused docker image') {
-      steps{
-        sh "docker rmi $imagename:$BUILD_NUMBER"
-         sh "docker rmi $imagename:latest"
+         stage('Deploy to K8s') {
+             steps {
+                 script {
+                     sh "sed -i 's,TEST_IMAGE_NAME,systemtesting48/html:$BUILD_NUMBER,' deploymentservice.yaml"
+                     sh "cat deploymentservice.yaml"
+                     sh "kubectl get pods"
+                     sh "kubectl apply -f deploymentservice.yaml"
+                 }
+             }
+         }
 
-      }
-    }
-}
-post {
-        always {
-            cleanWs()
-        }
-    }
-}
+         stage('Remove Unused docker image') {
+             steps {
+                 sh "docker rmi ${dockerImageName}:$BUILD_NUMBER"
+                 sh "docker rmi ${dockerImageName}:latest"
+             }
+         }
+     }
+
+     post {
+         always {
+             cleanWs()
+         }
+     }
+ }
