@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nodeapp-deployment
+  name: html-deployment
   labels:
-    app: nodeapp
+    app: html
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: nodeapp
+      app: html
   template:
     metadata:
       labels:
-        app: nodeapp 
+        app: html 
     spec:
       containers:
-      - name: nodeserver
-        image: thetips4you/nodeapp:latest
+      - name: html
+        image: systemtesting48/html:latest
         ports:
-        - containerPort: 3000
+        - containerPort: 80
         
         
 ---
@@ -29,10 +29,10 @@ metadata:
   name: nodeapp-service
 spec:
   selector:
-    app: nodeapp 
+    app: html 
   type: LoadBalancer
   ports:
   - protocol: TCP
     port: 5000
-    targetPort: 3000
+    targetPort: 80
     nodePort: 31110
