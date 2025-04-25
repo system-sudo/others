@@ -5,7 +5,7 @@
          dockerImageName = 'systemtesting48/html'
          registryCredential = 'docker'
          dockerImage = ''
-         KUBECONFIG = '/path/to/your/kubeconfig'
+         KUBECONFIG = '/home/ec2-user/.kube/config'
      }
 
      stages {
