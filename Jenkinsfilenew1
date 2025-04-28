@@ -38,13 +38,18 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-            steps {
-                withCredentials([file(credentialsId: 'jenkins-kubeconfig', variable: 'KUBECONFIG')]) {
-                    sh 'kubectl get pods'
-                    sh 'kubectl apply -f deploymentservice.yaml'
-                }
-            }
+    steps {
+        withCredentials([file(credentialsId: 'jenkins-kubeconfig', variable: 'KUBECONFIG')]) {
+            sh '''
+                echo "Using kubeconfig at: $KUBECONFIG"
+                kubectl config get-contexts
+                kubectl get pods
+                kubectl apply -f deploymentservice.yaml
+            '''
         }
+    }
+}
+
 
         stage('Remove Unused docker image') {
             steps {
