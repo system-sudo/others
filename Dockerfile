@@ -1,14 +1,15 @@
-# Use the official Nginx image from Docker Hub
+# Build stage
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Production stage
 FROM nginx:alpine
-
-# Copy the HTML file to the default Nginx directory
-COPY sq1.html /usr/share/nginx/html/index.html
-
-# Optionally, copy other assets (e.g., CSS, JS files)
-# COPY assets/ /usr/share/nginx/html/assets/
-
-# Expose port 80 for the web server
+COPY --from=build /app/dist /usr/share/nginx/html
+# Add nginx configuration if needed
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
-
-# Start Nginx in the foreground (default behavior)
 CMD ["nginx", "-g", "daemon off;"]

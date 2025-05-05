@@ -1,3 +1,0 @@
-[submodule "devsecops-demo"]
-	path = devsecops-demo
-	url = https://github.com/iam-veeramalla/devsecops-demo.git
